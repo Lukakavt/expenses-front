@@ -1,12 +1,13 @@
-const createButton = document.createElement("button");
+/* eslint-disable no-use-before-define */
+const createButton = document.createElement('button');
 
-const expensesInputDiv = document.getElementById("expensesInput");
+const expensesInputDiv = document.getElementById('expensesInput');
 let existingList;
 
-const link = "http://localhost:3300/api/expenses/";
+const link = 'http://localhost:3300/api/expenses/';
 const headers = {
-  Accept: "application/json",
-  "Content-Type": "application/json",
+  Accept: 'application/json',
+  'Content-Type': 'application/json',
 };
 
 const withBody = async (method, body, id) => {
@@ -28,79 +29,76 @@ const withoutBody = async (method, id) => {
 
 // get expenses list from api
 const getShopNames = async () => {
-  const getApi = await withoutBody("GET");
+  const getApi = await withoutBody('GET');
   const shop = await getApi.json();
   render(shop);
 };
 
 // delete expenses
 const deleteShopNames = async (id) => {
-  const getApi = await withoutBody("DELETE", id);
+  const getApi = await withoutBody('DELETE', id);
   const shop = await getApi.json();
   render(shop);
 };
 
 // making update input
 const editShopList = (item) => {
-  const editShopName = document.createElement("input");
-  const editPrice = document.createElement("input");
+  const editShopName = document.createElement('input');
+  const editPrice = document.createElement('input');
 
-  const currentShopName = item.querySelector(".shopName");
-  const currentPrice = item.querySelector(".itemPrice");
-  const icons = item.querySelector(".icons");
-  const checkIcon = icons.querySelector(".checkIcon");
+  const currentShopName = item.querySelector('.shopName');
+  const currentPrice = item.querySelector('.itemPrice');
+  const icons = item.querySelector('.icons');
+  const checkIcon = icons.querySelector('.checkIcon');
 
   const itemName = currentShopName.innerHTML.slice(
     3,
-    currentShopName.innerHTML.length
+    currentShopName.innerHTML.length,
   );
   const firstPrice = currentPrice.innerHTML.slice(
     1,
-    currentPrice.innerHTML.length
+    currentPrice.innerHTML.length,
   );
   if (
-    currentShopName.parentNode.innerHTML !==
-    `<input class="newShopInput" placeholder="Enter new shop name">`
+    currentShopName.parentNode.innerHTML
+    !== '<input class="newShopInput" placeholder="Enter new shop name">'
   ) {
     editShopName.value = itemName;
-    currentShopName.innerHTML = ``;
+    currentShopName.innerHTML = '';
 
-    editShopName.classList = "newShopInput";
-    editShopName.placeholder = "Enter new shop name";
+    editShopName.classList = 'newShopInput';
+    editShopName.placeholder = 'Enter new shop name';
     currentShopName.append(editShopName);
 
     editPrice.value = firstPrice;
-    currentPrice.innerHTML = ``;
-    editPrice.classList = "newShopInput";
-    editPrice.placeholder = "Enter new price";
-    editPrice.type = "number";
+    currentPrice.innerHTML = '';
+    editPrice.classList = 'newShopInput';
+    editPrice.placeholder = 'Enter new price';
+    editPrice.type = 'number';
     currentPrice.append(editPrice);
 
-    checkIcon.addEventListener("click", async () => {
+    checkIcon.addEventListener('click', async () => {
       const updateExpense = {};
       if (
-        itemName == editShopName.value &&
-        Number(firstPrice) == Number(editPrice.value)
+        itemName === editShopName.value
+        && Number(firstPrice) === Number(editPrice.value)
       ) {
         render(existingList);
-      } else {
-        if (
-          editShopName.value !== "" &&
-          Boolean(editShopName.value.trim()) &&
-          !Number.isNaN(Number(editPrice.value)) &&
-          editPrice.value !== ""
-        ) {
-          if (itemName !== editShopName.value)
-            updateExpense.shop = editShopName.value;
-          if (Number(firstPrice) !== Number(editPrice.value))
-            updateExpense.price = Number(editPrice.value);
-
-          const getApi = await withBody("PATCH", updateExpense, item.title);
-          const shop = await getApi.json();
-          render(shop);
-        } else {
-          getErrorMessage(editShopName.value == "", editPrice.value !== "");
+      } else if (
+        editShopName.value !== ''
+          && Boolean(editShopName.value.trim())
+          && !Number.isNaN(Number(editPrice.value))
+          && editPrice.value !== ''
+      ) {
+        if (itemName !== editShopName.value) updateExpense.shop = editShopName.value;
+        if (Number(firstPrice) !== Number(editPrice.value)) {
+          updateExpense.price = Number(editPrice.value);
         }
+        const getApi = await withBody('PATCH', updateExpense, item.title);
+        const shop = await getApi.json();
+        render(shop);
+      } else {
+        getErrorMessage(editShopName.value === '', editPrice.value !== '');
       }
     });
   }
@@ -108,21 +106,21 @@ const editShopList = (item) => {
 
 // add expenses
 const addExpense = async () => {
-  const getShopInput = document.getElementById("shopName");
-  const getPriceInput = document.getElementById("moneySpent");
+  const getShopInput = document.getElementById('shopName');
+  const getPriceInput = document.getElementById('moneySpent');
   if (
-    Boolean(getShopInput.value.trim()) &&
-    !Number.isNaN(Number(getPriceInput.value))
+    Boolean(getShopInput.value.trim())
+    && !Number.isNaN(Number(getPriceInput.value))
   ) {
     const newExpense = {
       shop: getShopInput.value,
       price: getPriceInput.value,
     };
 
-    getShopInput.value = "";
-    getPriceInput.value = "";
+    getShopInput.value = '';
+    getPriceInput.value = '';
 
-    const getApi = await withBody("POST", newExpense);
+    const getApi = await withBody('POST', newExpense);
     const shop = await getApi.json();
     render(shop);
   } else {
@@ -133,17 +131,17 @@ const addExpense = async () => {
 const render = async (shoppingLists) => {
   existingList = shoppingLists;
 
-  const getShopListDiv = document.getElementById("expanses-list");
-  const createTotal = document.createElement("div");
+  const getShopListDiv = document.getElementById('expanses-list');
+  const createTotal = document.createElement('div');
 
-  getShopListDiv.innerHTML = "";
+  getShopListDiv.innerHTML = '';
   let total = 0;
-  createTotal.id = "totalPrice";
+  createTotal.id = 'totalPrice';
   getShopListDiv.append(createTotal);
 
   // creating expenses list from API
   shoppingLists.forEach((item, index) => {
-    const shopList = document.createElement("div");
+    const shopList = document.createElement('div');
 
     shopList.innerHTML = `<p class="shopName">${index + 1}) ${item.shop}</p>
     <p>${item.createdAt}</p>
@@ -161,23 +159,22 @@ const render = async (shoppingLists) => {
   // calculating total
   createTotal.innerHTML = `Total: $${total}`;
 
-  //making delete button event listener
-  const deleteButton = document.querySelectorAll(".deleteIcon");
+  // making delete button event listener
+  const deleteButton = document.querySelectorAll('.deleteIcon');
   deleteButton.forEach((item) => {
-    item.addEventListener("click", () =>
-      deleteShopNames(item.parentNode.parentNode.title)
-    );
+    item.addEventListener('click', () => deleteShopNames(item.parentNode.parentNode.title));
   });
 
-  //making edit button event listener
-  const editButton = document.querySelectorAll(".editIcon");
+  // making edit button event listener
+  const editButton = document.querySelectorAll('.editIcon');
   editButton.forEach((item) => {
-    item.addEventListener("click", () => {
-      if (item.classList[2] == "editIcon") {
-        item.classList = "fa-solid fa-check checkIcon";
-        editShopList(item.parentNode.parentNode);
+    const editedItems = item;
+    editedItems.addEventListener('click', () => {
+      if (editedItems.classList[2] === 'editIcon') {
+        editedItems.classList = 'fa-solid fa-check checkIcon';
+        editShopList(editedItems.parentNode.parentNode);
       }
-      return;
+
       // item.remove();
     });
   });
@@ -185,33 +182,31 @@ const render = async (shoppingLists) => {
 
 window.onload = () => {
   getShopNames();
-  createButton.innerText = "Add";
-  createButton.addEventListener("click", addExpense);
+  createButton.innerText = 'Add';
+  createButton.addEventListener('click', addExpense);
   expensesInputDiv.append(createButton);
 };
 
-//get error message
-const getErrorMessage = (nameError, priceError) => {
-  //error messages
-  console.log(`name error ${nameError}`);
-  console.log(`price error ${priceError}`);
-  const getMain = document.querySelector("main");
-  const wrongValidity = document.createElement("div");
-  const errorAlert = document.createElement("p");
-  const errorMessage = document.createElement("p");
+// get error message
+const getErrorMessage = () => {
+  // error messages
+  const getMain = document.querySelector('main');
+  const wrongValidity = document.createElement('div');
+  const errorAlert = document.createElement('p');
+  const errorMessage = document.createElement('p');
 
-  wrongValidity.classList = "error-box";
+  wrongValidity.classList = 'error-box';
   getMain.appendChild(wrongValidity);
 
-  errorAlert.innerHTML = `<span>!</span> Invalid Shop name or Price`;
-  errorMessage.innerHTML = `Please enter valid name or price`;
+  errorAlert.innerHTML = '<span>!</span> Invalid Shop name or Price';
+  errorMessage.innerHTML = 'Please enter valid name or price';
 
-  errorAlert.classList = "error-alert";
+  errorAlert.classList = 'error-alert';
   wrongValidity.append(errorAlert);
 
-  errorMessage.classList = "error-message";
+  errorMessage.classList = 'error-message';
   wrongValidity.append(errorMessage);
-  setTimeout(function () {
+  setTimeout(() => {
     wrongValidity.remove();
   }, 3000);
 };
